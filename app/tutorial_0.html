@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" >
   <head>
+    <meta name="description" content="Angular Material: Theming and ARIA">
     <title>Angular Material - Starter App</title>
     <link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Roboto:400,500,700,400italic'>
     <link href="../node_modules/angular-material/angular-material.css" rel="stylesheet" />
@@ -21,26 +22,42 @@
   <script type="text/javascript">
       angular
           .module('starterApp', [ 'ngMaterial', 'users' ])
-          .config(function ($mdIconProvider) {
+          .config(function ($mdThemingProvider, $mdIconProvider) {
               $mdIconProvider.defaultIconSet("./assets/svg/avatars.svg", 128);
+              $mdIconProvider.icon("share", "./assets/svg/share.svg", 24);
+              $mdIconProvider.icon("menu", "./assets/svg/menu.svg", 24);
+              $mdThemingProvider.theme('default')
+                .primaryPalette('brown')
+                .accentPalette('red');
           })
           .run(function($log){
             $log.debug("startApp running ");
           });
     </script>
 
-  <md-toolbar layout="row">
+  <md-toolbar layout="row" id="toolbar">
+    <md-button class="menu"
+               hide-gt-sm ng-click="ul.toggleList()"
+               aria-label="Show User List"
+    >
+      <md-icon md-svg-icon="menu"></md-icon>
+    </md-button>
     <h3>Angular Material Starter</h3>
   </md-toolbar>
 
-  <div class="container" flex layout="row">
-    <md-sidenav md-is-locked-open="true" class="md-whiteframe-4dp">
+  <div class="container" id="container" flex layout="row">
+    <md-sidenav md-is-locked-open="$mdMedia('gt-sm')"
+                md-component-id="left"
+                ng-click="ul.toggleList()"
+                class="md-whiteframe-4dp">
       <md-list>
-
         <!-- List item #1 -->
         <md-list-item ng-repeat="u in ul.users">
-          <md-button ng-click="ul.selectUser(u)" ng-class="{'selected' : u === ul.selected }">
-            <md-icon md-svg-src="{{u.avatar}}" class="avatar"></md-icon>
+          <md-button ng-click="ul.selectUser(u)"
+                     ng-class="{'selected' : u === ul.selected }"
+                     aria-label="Select User from List on the LEFT"
+          >
+            <md-icon md-svg-icon="{{u.avatar}}" class="avatar"></md-icon>
             {{u.name}}
           </md-button>
         </md-list-item>
@@ -53,6 +70,14 @@
       <p>
         {{ul.selected.content}}
       </p>
+
+      <md-button class="share"
+                 md-no-ink ng-click="ul.makeContact(ul.selected)"
+                 aria-label="Share with {{ul.selected.name}}"
+      >
+        <md-icon md-svg-icon="share"></md-icon>
+      </md-button>
+
     </md-content>
 
   </div>
